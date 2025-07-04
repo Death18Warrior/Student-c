@@ -111,7 +111,7 @@ export default function AiAssistant({ isOpen, onClose }) {
         {
             role: "assistant",
             content:
-                "Hi there! I'm your AI assistant for this course. How can I help you with SQL Injection Attack concepts?",
+                "Hi there! I'm your AI assistant for this course. How can I help you with Universal Law of Gravitation concepts?",
         },
     ])
     const [input, setInput] = useState("")
@@ -205,7 +205,7 @@ export default function AiAssistant({ isOpen, onClose }) {
                     <Input
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask about SQL injection..."
+                        placeholder="Ask about Law of Gravitation..."
                         className="flex-1"
                         disabled={loading}
                     />

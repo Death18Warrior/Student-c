@@ -58,7 +58,8 @@ export default function Navbar() {
                             {/* Logo - Left Side */}
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/dashboard/" className="flex items-center">
-                                    <Image src="/111.png" alt="Logo" width={50} height={45} />
+                                    <Image src="/seedling.png" alt="Logo" width={65} height={45} />
+                                    {/* <Image src="/111.png" alt="Logo" width={50} height={45} /> */}
                                     {/* <span className="ml-2 text-xl font-semibold">C2I</span> */}
                                 </Link>
                             </div>
