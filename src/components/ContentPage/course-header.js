@@ -8,7 +8,7 @@ export default function CourseHeader({ course, onAiAssistantToggle }) {
   return (
     <header className="bg-white border-b border-gray-200 p-2 flex items-center justify-between flex-wrap">
       <div className="flex items-center justify-center">
-        <h3 className="font-bold">{course.title}</h3>
+        <h3 className="font-bold ml-3">{course.title}</h3>
         {/* <span className="text-sm text-gray-500">
           {course.currentSection}/{course.totalSections} • {course.currentLesson.duration}
         </span> */}

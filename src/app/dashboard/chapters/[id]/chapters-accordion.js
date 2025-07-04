@@ -53,75 +53,75 @@ export default function ChaptersAccordion({ chapters }) {
                         </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-6 pt-2">
-                        <Link href={'/courses/photosynthesis-basics'}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {chapter.topics.map((topic) => (
-                                <div
-                                    key={topic.id}
-                                    className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden group cursor-pointer"
-                                >
-                                    <div className="relative h-48">
-                                        <img
-                                            src={topic.image || "/placeholder.svg"}
-                                            alt={topic.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <button className="px-6 py-2 bg-white text-gray-900 rounded-full font-medium transform scale-95 group-hover:scale-100 transition-transform">
-                                                Start Learning
-                                            </button>
-                                        </div>
-                                        <div className="absolute top-4 right-4">
-                                            <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors">
-                                                <Bookmark className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-6">
-                                        <div className="flex flex-wrap gap-2 mb-3">
-                                            {topic.tags.map((tag, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{topic.title}</h3>
-
-                                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                                            <span>{topic.type}</span>
-                                            <span>•</span>
-                                            <span>{topic.grade}</span>
-                                        </div>
-
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`w-2 h-2 rounded-full ${getStatusColor(topic.status)}`}></span>
-                                                <span className="text-sm text-gray-600">
-                                                    {topic.status === "completed"
-                                                        ? "Completed"
-                                                        : topic.status === "in-progress"
-                                                            ? "In Progress"
-                                                            : "Not Started"}
-                                                </span>
+                        <Link href={'/courses/gravitation-basics'}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {chapter.topics.map((topic) => (
+                                    <div
+                                        key={topic.id}
+                                        className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow overflow-hidden group cursor-pointer"
+                                    >
+                                        <div className="relative h-48">
+                                            <img
+                                                src={topic.image || "/placeholder.svg"}
+                                                alt={topic.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button className="px-6 py-2 bg-white text-gray-900 rounded-full font-medium transform scale-95 group-hover:scale-100 transition-transform">
+                                                    Start Learning
+                                                </button>
                                             </div>
-                                            <span className="text-sm font-medium text-gray-900">{topic.progress}%</span>
+                                            <div className="absolute top-4 right-4">
+                                                <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors">
+                                                    <Bookmark className="h-4 w-4" />
+                                                </button>
+                                            </div>
                                         </div>
 
-                                        <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full ${getStatusColor(topic.status)} rounded-full`}
-                                                style={{ width: `${topic.progress}%` }}
-                                            ></div>
+                                        <div className="p-6">
+                                            <div className="flex flex-wrap gap-2 mb-3">
+                                                {topic.tags.map((tag, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-2">{topic.title}</h3>
+
+                                            <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                                                <span>{topic.type}</span>
+                                                <span>•</span>
+                                                <span>{topic.grade}</span>
+                                            </div>
+
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`w-2 h-2 rounded-full ${getStatusColor(topic.status)}`}></span>
+                                                    <span className="text-sm text-gray-600">
+                                                        {topic.status === "completed"
+                                                            ? "Completed"
+                                                            : topic.status === "in-progress"
+                                                                ? "In Progress"
+                                                                : "Not Started"}
+                                                    </span>
+                                                </div>
+                                                <span className="text-sm font-medium text-gray-900">{topic.progress}%</span>
+                                            </div>
+
+                                            <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full ${getStatusColor(topic.status)} rounded-full`}
+                                                    style={{ width: `${topic.progress}%` }}
+                                                ></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
                         </Link>
                     </AccordionContent>
                 </AccordionItem>

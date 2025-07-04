@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Fall Physics Simulation</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 95%;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        /* background: white; */
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(45deg, #4caf50, #45a049);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+      .simulation-area {
+        padding: 30px;
+      }
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 30px;
+        margin-bottom: 30px;
+        align-items: end;
+      }
+      .ball-control {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+      .ball-control:hover {
+        border-color: #4caf50;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .ball-control h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.3em;
+      }
+      .slider-container {
+        margin-bottom: 15px;
+      }
+      .slider-container label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+      }
+      .slider {
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+        transition: all 0.3s ease;
+      }
+      .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #4caf50;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .slider::-webkit-slider-thumb:hover {
+        background: #45a049;
+        transform: scale(1.2);
+      }
+      .mass-display {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #2c3e50;
+        text-align: center;
+        padding: 8px;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+      }
+      .action-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .height-control {
+        background: #fff3cd;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #ffeaa7;
+        margin-bottom: 15px;
+      }
+      .height-control h4 {
+        margin-bottom: 10px;
+        color: #856404;
+        font-size: 1.1em;
+      }
+      .height-display {
+        font-size: 1em;
+        font-weight: bold;
+        color: #856404;
+        text-align: center;
+        padding: 5px;
+        background: white;
+        border-radius: 5px;
+        border: 1px solid #ffeaa7;
+        margin-top: 8px;
+      }
+      .btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: linear-gradient(45deg, #4caf50, #45a049);
+        color: white;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+      .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+      }
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+      .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .toggle {
+        position: relative;
+        width: 50px;
+        height: 25px;
+        background: #ccc;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .toggle.active {
+        background: #4caf50;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        width: 21px;
+        height: 21px;
+        border-radius: 50%;
+        background: white;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+      }
+      .toggle.active::after {
+        left: 27px;
+      }
+      .canvas-container {
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: all 0.5s ease;
+      }
+      .canvas-container.vacuum {
+        background: linear-gradient(
+          to bottom,
+          #87ceeb 0%,
+          #87ceeb 70%,
+          #8fbc8f 70%,
+          #8fbc8f 100%
+        );
+      }
+      .canvas-container.air-resistance {
+        background: linear-gradient(
+          to bottom,
+          #87ceeb 0%,
+          #87ceeb 60%,
+          #90ee90 60%,
+          #90ee90 70%,
+          #228b22 70%,
+          #228b22 100%
+        );
+      }
+      #simulationCanvas {
+        width: 100%;
+        height: 600px;
+        border-radius: 10px;
+        background: transparent;
+        display: block;
+      }
+      .stats-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 30px;
+      }
+      .chart-container {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        border: 2px solid #e9ecef;
+      }
+      .chart-container h3 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+        text-align: center;
+        font-size: 1.4em;
+      }
+      .chart {
+        width: 100%;
+        height: 250px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: white;
+        display: block;
+      }
+      .info-panel {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        border-left: 5px solid #2196f3;
+      }
+      .info-panel h4 {
+        color: #1976d2;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+      }
+      .info-panel p {
+        color: #424242;
+        line-height: 1.6;
+      }
+      @media (max-width: 768px) {
+        .controls {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .stats-container {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .header h1 {
+          font-size: 2em;
+        }
+        .header p {
+          font-size: 1em;
+        }
+      }
+      .ball-preview {
+        border-radius: 50%;
+        margin: 10px auto;
+        transition: all 0.3s ease;
+        background-image: url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ball-nCg7mWGPeW7yXvJlq7VX1DEsdnkway.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🌍 Law of Universal Gravitation</h1>
+        <!-- <h1>🌍 Free Fall Physics Simulation</h1> -->
+        <p>
+          Discover how gravitational force is affected by mass and distance of
+          the object!
+        </p>
+      </div>
+      <div class="simulation-area">
+        <div class="controls">
+          <div class="ball-control">
+            <h3>⚪ Ball 1</h3>
+            <div class="ball-preview" id="ball1Preview"></div>
+            <div class="slider-container">
+              <label for="mass1">Mass (kg):</label>
+              <input
+                type="range"
+                id="mass1"
+                class="slider"
+                min="1"
+                max="100"
+                value="10"
+              />
+              <div class="mass-display" id="mass1Display">10 kg</div>
+            </div>
+          </div>
+          <div class="ball-control">
+            <h3>⚪ Ball 2</h3>
+            <div class="ball-preview" id="ball2Preview"></div>
+            <div class="slider-container">
+              <label for="mass2">Mass (kg):</label>
+              <input
+                type="range"
+                id="mass2"
+                class="slider"
+                min="1"
+                max="100"
+                value="50"
+              />
+              <div class="mass-display" id="mass2Display">50 kg</div>
+            </div>
+          </div>
+          <div class="action-controls">
+            <div class="height-control">
+              <h4>📏 Drop Height</h4>
+              <input
+                type="range"
+                id="dropHeight"
+                class="slider"
+                min="10"
+                max="50"
+                value="20"
+              />
+              <div class="height-display" id="heightDisplay">20 meters</div>
+            </div>
+            <button id="dropBtn" class="btn btn-primary">🚀 DROP BALLS</button>
+            <button id="resetBtn" class="btn btn-secondary">🔄 RESET</button>
+            <div class="toggle-container">
+              <span>Air Resistance:</span>
+              <div id="airResistanceToggle" class="toggle"></div>
+            </div>
+          </div>
+        </div>
+        <div class="canvas-container vacuum" id="canvasContainer">
+          <div style="position: relative">
+            <div style="position: absolute; top: 0; right: 0">
+              <img
+                src="./logo.png"
+                style="width: 180px; height: auto; opacity: 0.7"
+              />
+            </div>
+            <canvas id="simulationCanvas"></canvas>
+          </div>
+        </div>
+        <div class="stats-container">
+          <div class="chart-container">
+            <h3>📊 Time to Ground vs Mass</h3>
+            <canvas id="barChart" class="chart"></canvas>
+          </div>
+          <div class="chart-container">
+            <h3>📈 Acceleration Over Time</h3>
+            <canvas id="lineChart" class="chart"></canvas>
+          </div>
+        </div>
+        <div class="info-panel">
+          <h4>🧠 Physics Insight</h4>
+          <p id="physicsInsight">
+            Without air resistance, both balls will fall at the same rate
+            regardless of their mass! This is because gravitational acceleration
+            (g = 9.8 m/s²) is constant for all objects near Earth's surface.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      class PhysicsSimulation {
+        constructor() {
+          this.ballImage = new Image();
+          this.ballImage.crossOrigin = "anonymous";
+          this.ballImage.src =
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ball-nCg7mWGPeW7yXvJlq7VX1DEsdnkway.png";
+          this.ballImage.onload = () => {
+            this.imageLoaded = true;
+            this.drawInitialState();
+          };
+
+          // Initialize sound
+          this.hitSound = new Audio("./hitTheGround.wav");
+          this.hitSound.preload = "auto";
+
+          this.initializeElements();
+          this.setupCanvas();
+          this.initializeSimulation();
+          this.setupEventListeners();
+          this.updateMassDisplays();
+          this.updateHeightDisplay();
+          this.updateBallPreviews();
+          this.drawInitialState();
+          this.drawCharts();
+        }
+
+        initializeElements() {
+          this.canvas = document.getElementById("simulationCanvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.barChart = document.getElementById("barChart");
+          this.barCtx = this.barChart.getContext("2d");
+          this.lineChart = document.getElementById("lineChart");
+          this.lineCtx = this.lineChart.getContext("2d");
+          this.canvasContainer = document.getElementById("canvasContainer");
+        }
+
+        setupCanvas() {
+          const resizeCanvas = () => {
+            // Set canvas size to match display size
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width;
+            this.canvas.height = rect.height;
+            this.barChart.width = this.barChart.offsetWidth;
+            this.barChart.height = this.barChart.offsetHeight;
+            this.lineChart.width = this.lineChart.offsetWidth;
+            this.lineChart.height = this.lineChart.offsetHeight;
+            if (!this.isRunning) {
+              this.resetSimulation();
+              this.drawInitialState();
+              this.drawCharts();
+            }
+          };
+          // Initial setup
+          setTimeout(resizeCanvas, 100); // Delay to ensure elements are rendered
+          window.addEventListener("resize", resizeCanvas);
+        }
+
+        initializeSimulation() {
+          this.gravity = 9.8; // m/s²
+          this.pixelsPerMeter = 1; // Will be calculated dynamically
+          this.airResistance = false;
+          this.isRunning = false;
+          this.animationId = null;
+          this.lastTime = 0;
+          this.imageLoaded = false;
+          this.groundThickness = 40;
+          this.resetSimulation();
+        }
+
+        resetSimulation() {
+          const mass1 = parseFloat(document.getElementById("mass1").value);
+          const mass2 = parseFloat(document.getElementById("mass2").value);
+          const dropHeight = parseFloat(
+            document.getElementById("dropHeight").value
+          );
+          // Calculate pixels per meter based on canvas height and drop height
+          this.pixelsPerMeter =
+            (this.canvas.height - this.groundThickness - 100) / dropHeight;
+          const startY = 50; // Start position from top
+          this.ball1 = {
+            x: 0, // Will be set in draw
+            y: startY,
+            initialY: startY,
+            mass: mass1,
+            velocity: 0,
+            acceleration: this.gravity,
+            radius: this.calculateRadius(mass1),
+            timeToGround: 0,
+            hasHitGround: false,
+            soundPlayed: false, // Track if sound has been played
+          };
+          this.ball2 = {
+            x: 0, // Will be set in draw
+            y: startY,
+            initialY: startY,
+            mass: mass2,
+            velocity: 0,
+            acceleration: this.gravity,
+            radius: this.calculateRadius(mass2),
+            timeToGround: 0,
+            hasHitGround: false,
+            soundPlayed: false, // Track if sound has been played
+          };
+          this.startTime = 0;
+          this.currentTime = 0;
+          this.accelerationData = [];
+          this.timeData = [];
+          this.dropHeight = dropHeight;
+        }
+
+        calculateRadius(mass) {
+          // Much more dramatic size scaling - mass directly affects radius more significantly
+          return Math.max(15, Math.min(80, 15 + (mass / 100) * 65));
+        }
+
+        setupEventListeners() {
+          document.getElementById("mass1").addEventListener("input", () => {
+            this.updateMassDisplays();
+            this.updateBallPreviews();
+            if (!this.isRunning) {
+              this.resetSimulation();
+              this.drawInitialState();
+            }
+          });
+          document.getElementById("mass2").addEventListener("input", () => {
+            this.updateMassDisplays();
+            this.updateBallPreviews();
+            if (!this.isRunning) {
+              this.resetSimulation();
+              this.drawInitialState();
+            }
+          });
+          document
+            .getElementById("dropHeight")
+            .addEventListener("input", () => {
+              this.updateHeightDisplay();
+              if (!this.isRunning) {
+                this.resetSimulation();
+                this.drawInitialState();
+              }
+            });
+          document.getElementById("dropBtn").addEventListener("click", () => {
+            this.startSimulation();
+          });
+          document.getElementById("resetBtn").addEventListener("click", () => {
+            this.stopSimulation();
+            this.resetSimulation();
+            this.drawInitialState();
+            this.drawCharts();
+          });
+          document
+            .getElementById("airResistanceToggle")
+            .addEventListener("click", () => {
+              this.toggleAirResistance();
+            });
+        }
+
+        updateMassDisplays() {
+          const mass1 = document.getElementById("mass1").value;
+          const mass2 = document.getElementById("mass2").value;
+          document.getElementById("mass1Display").textContent = `${mass1} kg`;
+          document.getElementById("mass2Display").textContent = `${mass2} kg`;
+        }
+
+        updateHeightDisplay() {
+          const height = document.getElementById("dropHeight").value;
+          document.getElementById(
+            "heightDisplay"
+          ).textContent = `${height} meters`;
+        }
+
+        updateBallPreviews() {
+          const mass1 = parseFloat(document.getElementById("mass1").value);
+          const mass2 = parseFloat(document.getElementById("mass2").value);
+          const radius1 = Math.min(50, this.calculateRadius(mass1));
+          const radius2 = Math.min(50, this.calculateRadius(mass2));
+          document.getElementById("ball1Preview").style.width = `${radius1}px`;
+          document.getElementById("ball1Preview").style.height = `${radius1}px`;
+          document.getElementById("ball2Preview").style.width = `${radius2}px`;
+          document.getElementById("ball2Preview").style.height = `${radius2}px`;
+        }
+
+        toggleAirResistance() {
+          const toggle = document.getElementById("airResistanceToggle");
+          this.airResistance = !this.airResistance;
+          toggle.classList.toggle("active", this.airResistance);
+          // Change background based on air resistance
+          if (this.airResistance) {
+            this.canvasContainer.className = "canvas-container air-resistance";
+          } else {
+            this.canvasContainer.className = "canvas-container vacuum";
+          }
+          const insight = document.getElementById("physicsInsight");
+          if (this.airResistance) {
+            insight.textContent =
+              "With air resistance enabled, HEAVIER objects fall faster because they have a higher terminal velocity and overcome air resistance better. The drag force affects lighter objects MORE significantly! Notice the realistic garden environment.";
+          } else {
+            insight.textContent =
+              "Without air resistance (vacuum), both balls will fall at the same rate regardless of their mass! This is because gravitational acceleration (g = 9.8 m/s²) is constant for all objects near Earth's surface.";
+          }
+        }
+
+        playHitSound() {
+          try {
+            // Clone the audio to allow multiple simultaneous plays
+            const sound = this.hitSound.cloneNode();
+            sound.volume = 0.5; // Adjust volume as needed
+            sound.play().catch((e) => {
+              console.log("Could not play sound:", e);
+            });
+          } catch (e) {
+            console.log("Sound not available:", e);
+          }
+        }
+
+        startSimulation() {
+          if (this.isRunning) return;
+          this.resetSimulation();
+          this.isRunning = true;
+          this.startTime = performance.now();
+          this.lastTime = this.startTime;
+          document.getElementById("dropBtn").disabled = true;
+          this.animate();
+        }
+
+        stopSimulation() {
+          this.isRunning = false;
+          if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+          }
+          document.getElementById("dropBtn").disabled = false;
+        }
+
+        animate(currentTime) {
+          if (!this.isRunning) return;
+          if (!currentTime) currentTime = performance.now();
+          const deltaTime = (currentTime - this.lastTime) / 1000; // Convert to seconds
+          this.currentTime = (currentTime - this.startTime) / 1000;
+          this.lastTime = currentTime;
+          this.updatePhysics(deltaTime);
+          this.draw();
+          this.updateCharts();
+          // Check if both balls have hit the ground
+          if (this.ball1.hasHitGround && this.ball2.hasHitGround) {
+            this.stopSimulation();
+            this.drawFinalCharts();
+            return;
+          }
+          this.animationId = requestAnimationFrame((time) =>
+            this.animate(time)
+          );
+        }
+
+        updatePhysics(deltaTime) {
+          if (deltaTime > 0.1) deltaTime = 0.016; // Cap delta time to prevent large jumps
+
+          const groundY = this.canvas.height - this.groundThickness;
+
+          [this.ball1, this.ball2].forEach((ball) => {
+            if (ball.hasHitGround) return;
+
+            // Store previous position for continuous collision detection
+            const prevY = ball.y;
+            const prevVelocity = ball.velocity;
+
+            // Calculate air resistance if enabled
+            let acceleration = this.gravity;
+            if (this.airResistance && ball.velocity > 0) {
+              // Correct air resistance: heavier objects should be LESS affected by drag
+              const area =
+                Math.PI * (ball.radius / 1000) * (ball.radius / 1000);
+              const dragCoefficient = 2.0 / ball.mass;
+              const dragAcceleration =
+                dragCoefficient * ball.velocity * ball.velocity;
+              acceleration = Math.max(1.0, this.gravity - dragAcceleration);
+            }
+
+            ball.acceleration = acceleration;
+            ball.velocity += acceleration * deltaTime;
+
+            // Calculate movement distance
+            const movement =
+              ball.velocity * deltaTime * this.pixelsPerMeter * 2;
+            const newY = ball.y + movement;
+
+            // CONTINUOUS COLLISION DETECTION
+            const prevBallBottom = prevY + ball.radius;
+            const newBallBottom = newY + ball.radius;
+
+            // Check if ball crosses ground during this frame
+            if (prevBallBottom < groundY && newBallBottom >= groundY) {
+              // Calculate exact collision time using quadratic formula for accurate physics
+              // Using kinematic equation: s = ut + (1/2)at²
+              const distanceToGround = groundY - prevBallBottom;
+              const u = prevVelocity * this.pixelsPerMeter * 2; // Initial velocity in pixels
+              const a = acceleration * this.pixelsPerMeter * 2; // Acceleration in pixels
+
+              // Solve: distanceToGround = u*t + 0.5*a*t²
+              // Rearranged: 0.5*a*t² + u*t - distanceToGround = 0
+              let collisionTime = deltaTime; // Fallback
+
+              if (Math.abs(a) > 0.001) {
+                const discriminant = u * u + 2 * a * distanceToGround;
+                if (discriminant >= 0) {
+                  collisionTime = (-u + Math.sqrt(discriminant)) / a;
+                  collisionTime = Math.max(
+                    0,
+                    Math.min(collisionTime, deltaTime)
+                  );
+                }
+              } else if (Math.abs(u) > 0.001) {
+                collisionTime = distanceToGround / u;
+                collisionTime = Math.max(0, Math.min(collisionTime, deltaTime));
+              }
+
+              // Position ball exactly on ground
+              ball.y = groundY - ball.radius;
+              ball.hasHitGround = true;
+              ball.timeToGround =
+                this.currentTime - (deltaTime - collisionTime);
+              ball.velocity = 0;
+
+              // Play sound only once per ball
+              if (!ball.soundPlayed) {
+                this.playHitSound();
+                ball.soundPlayed = true;
+              }
+            } else {
+              // Normal movement - no collision
+              ball.y = newY;
+            }
+
+            // Safety check - ensure ball never goes below ground
+            if (ball.y + ball.radius > groundY) {
+              ball.y = groundY - ball.radius;
+              if (!ball.hasHitGround) {
+                ball.hasHitGround = true;
+                ball.timeToGround = this.currentTime;
+                ball.velocity = 0;
+
+                // Play sound only once per ball
+                if (!ball.soundPlayed) {
+                  this.playHitSound();
+                  ball.soundPlayed = true;
+                }
+              }
+            }
+          });
+        }
+
+        draw() {
+          if (!this.canvas.width || !this.canvas.height) return;
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          // Set ball positions
+          this.ball1.x = this.canvas.width * 0.3;
+          this.ball2.x = this.canvas.width * 0.7;
+          // Draw ground with different textures based on air resistance
+          const groundY = this.canvas.height - this.groundThickness;
+          if (this.airResistance) {
+            // Draw grass texture
+            this.ctx.fillStyle = "#228B22";
+            this.ctx.fillRect(
+              0,
+              groundY,
+              this.canvas.width,
+              this.groundThickness
+            );
+            // Add grass blades effect
+            this.ctx.strokeStyle = "#32CD32";
+            this.ctx.lineWidth = 2;
+            for (let i = 0; i < this.canvas.width; i += 8) {
+              this.ctx.beginPath();
+              this.ctx.moveTo(i, groundY);
+              this.ctx.lineTo(i + Math.random() * 4 - 2, groundY - 8);
+              this.ctx.stroke();
+            }
+          } else {
+            // Original ground
+            this.ctx.fillStyle = "#8FBC8F";
+            this.ctx.fillRect(
+              0,
+              groundY,
+              this.canvas.width,
+              this.groundThickness
+            );
+          }
+          // Draw precise ground line
+          this.ctx.strokeStyle = this.airResistance ? "#006400" : "#654321";
+          this.ctx.lineWidth = 3;
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, groundY);
+          this.ctx.lineTo(this.canvas.width, groundY);
+          this.ctx.stroke();
+
+          // Draw balls
+          this.drawBall(this.ball1);
+          this.drawBall(this.ball2);
+
+          // Draw info text
+          this.drawInfoText();
+        }
+
+        drawBall(ball) {
+          if (!this.imageLoaded) {
+            // Fallback to circle if image not loaded
+            this.ctx.fillStyle = "#C0C0C0";
+            this.ctx.beginPath();
+            this.ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+            this.ctx.fill();
+          } else {
+            // Draw shadow
+            this.ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+            this.ctx.beginPath();
+            this.ctx.ellipse(
+              ball.x + 5,
+              ball.y + ball.radius + 5,
+              ball.radius * 0.8,
+              ball.radius * 0.3,
+              0,
+              0,
+              2 * Math.PI
+            );
+            this.ctx.fill();
+            // Draw the metal ball image
+            this.ctx.drawImage(
+              this.ballImage,
+              ball.x - ball.radius,
+              ball.y - ball.radius,
+              ball.radius * 2,
+              ball.radius * 2
+            );
+          }
+          // Mass label with better visibility
+          this.ctx.fillStyle = "white";
+          this.ctx.font = "bold 14px Arial";
+          this.ctx.textAlign = "center";
+          this.ctx.strokeStyle = "black";
+          this.ctx.lineWidth = 3;
+          this.ctx.strokeText(`${ball.mass}kg`, ball.x, ball.y + 5);
+          this.ctx.fillText(`${ball.mass}kg`, ball.x, ball.y + 5);
+        }
+
+        drawInfoText() {
+          this.ctx.fillStyle = "#2c3e50";
+          this.ctx.font = "16px Arial";
+          this.ctx.textAlign = "left";
+          const info = [
+            `Environment: ${
+              this.airResistance ? "Earth (Air Resistance)" : "Vacuum"
+            }`,
+            `Drop Height: ${this.dropHeight} meters`,
+            `Ball 1 (${this.ball1.mass}kg): v = ${this.ball1.velocity.toFixed(
+              1
+            )} m/s`,
+            `Ball 2 (${this.ball2.mass}kg): v = ${this.ball2.velocity.toFixed(
+              1
+            )} m/s`,
+          ];
+          info.forEach((text, index) => {
+            this.ctx.fillText(text, 20, 30 + index * 25);
+          });
+        }
+
+        drawInitialState() {
+          this.draw();
+        }
+
+        updateCharts() {
+          // Store data for real-time acceleration chart
+          this.timeData.push(this.currentTime);
+          this.accelerationData.push({
+            ball1: this.ball1.acceleration,
+            ball2: this.ball2.acceleration,
+          });
+          // Keep only last 100 data points for performance
+          if (this.timeData.length > 100) {
+            this.timeData.shift();
+            this.accelerationData.shift();
+          }
+          this.drawAccelerationChart();
+        }
+
+        drawCharts() {
+          this.drawBarChart();
+          this.drawAccelerationChart();
+        }
+
+        drawBarChart() {
+          if (!this.barChart.width || !this.barChart.height) return;
+          const ctx = this.barCtx;
+          ctx.clearRect(0, 0, this.barChart.width, this.barChart.height);
+          if (this.ball1.timeToGround === 0 && this.ball2.timeToGround === 0) {
+            // Draw placeholder
+            ctx.fillStyle = "#666";
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(
+              "Drop the balls to see results!",
+              this.barChart.width / 2,
+              this.barChart.height / 2
+            );
+            return;
+          }
+          const margin = 40;
+          const chartWidth = this.barChart.width - 2 * margin;
+          const chartHeight = this.barChart.height - 2 * margin;
+          // Draw axes
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(margin, margin);
+          ctx.lineTo(margin, margin + chartHeight);
+          ctx.lineTo(margin + chartWidth, margin + chartHeight);
+          ctx.stroke();
+          // Draw bars if simulation has run
+          if (this.ball1.hasHitGround || this.ball2.hasHitGround) {
+            const maxTime = Math.max(
+              this.ball1.timeToGround,
+              this.ball2.timeToGround,
+              1
+            );
+            const barWidth = chartWidth / 4;
+            // Ball 1 bar
+            if (this.ball1.timeToGround > 0) {
+              const bar1Height =
+                (this.ball1.timeToGround / maxTime) * chartHeight;
+              ctx.fillStyle = "#db1f48";
+              ctx.fillRect(
+                margin + barWidth * 0.5,
+                margin + chartHeight - bar1Height,
+                barWidth,
+                bar1Height
+              );
+              ctx.fillStyle = "#333";
+              ctx.font = "12px Arial";
+              ctx.textAlign = "center";
+              ctx.fillText(
+                `${this.ball1.timeToGround.toFixed(2)}s`,
+                margin + barWidth,
+                margin + chartHeight - bar1Height - 10
+              );
+            }
+            // Ball 2 bar
+            if (this.ball2.timeToGround > 0) {
+              const bar2Height =
+                (this.ball2.timeToGround / maxTime) * chartHeight;
+              ctx.fillStyle = "#004369";
+              ctx.fillRect(
+                margin + barWidth * 2.5,
+                margin + chartHeight - bar2Height,
+                barWidth,
+                bar2Height
+              );
+              ctx.fillStyle = "#333";
+              ctx.font = "12px Arial";
+              ctx.textAlign = "center";
+              ctx.fillText(
+                `${this.ball2.timeToGround.toFixed(2)}s`,
+                margin + barWidth * 3,
+                margin + chartHeight - bar2Height - 10
+              );
+            }
+            // Labels
+            ctx.fillStyle = "#333";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(
+              `${this.ball1.mass}kg`,
+              margin + barWidth,
+              margin + chartHeight + 20
+            );
+            ctx.fillText(
+              `${this.ball2.mass}kg`,
+              margin + barWidth * 3,
+              margin + chartHeight + 20
+            );
+          }
+          // Axis labels
+          ctx.fillStyle = "#333";
+          ctx.font = "14px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "Mass (kg)",
+            this.barChart.width / 2,
+            this.barChart.height - 5
+          );
+          ctx.save();
+          ctx.translate(15, this.barChart.height / 2);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText("Time (s)", 0, 0);
+          ctx.restore();
+        }
+
+        drawAccelerationChart() {
+          if (!this.lineChart.width || !this.lineChart.height) return;
+          const ctx = this.lineCtx;
+          ctx.clearRect(0, 0, this.lineChart.width, this.lineChart.height);
+          const margin = 40;
+          const chartWidth = this.lineChart.width - 2 * margin;
+          const chartHeight = this.lineChart.height - 2 * margin;
+          // Draw axes
+          ctx.strokeStyle = "#333";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(margin, margin);
+          ctx.lineTo(margin, margin + chartHeight);
+          ctx.lineTo(margin + chartWidth, margin + chartHeight);
+          ctx.stroke();
+          if (this.timeData.length > 1) {
+            const maxTime = Math.max(...this.timeData, 1);
+            const maxAccel = 12; // Fixed scale for acceleration
+            // Draw Ball 1 acceleration line
+            ctx.strokeStyle = "#db1f48";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            this.timeData.forEach((time, index) => {
+              const x = margin + (time / maxTime) * chartWidth;
+              const y =
+                margin +
+                chartHeight -
+                (this.accelerationData[index].ball1 / maxAccel) * chartHeight;
+              if (index === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            // Draw Ball 2 acceleration line
+            ctx.strokeStyle = "#004369";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            this.timeData.forEach((time, index) => {
+              const x = margin + (time / maxTime) * chartWidth;
+              const y =
+                margin +
+                chartHeight -
+                (this.accelerationData[index].ball2 / maxAccel) * chartHeight;
+              if (index === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+          }
+          // Draw reference line at g = 9.8 m/s²
+          const gLine = margin + chartHeight - (9.8 / 12) * chartHeight;
+          ctx.strokeStyle = "#ff9800";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(margin, gLine);
+          ctx.lineTo(margin + chartWidth, gLine);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // Labels
+          ctx.fillStyle = "#333";
+          ctx.font = "12px Arial";
+          ctx.textAlign = "right";
+          ctx.fillText("9.8 m/s²", margin - 5, gLine + 4);
+          // Axis labels
+          ctx.font = "14px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "Time (s)",
+            this.lineChart.width / 2,
+            this.lineChart.height - 5
+          );
+          ctx.save();
+          ctx.translate(15, this.lineChart.height / 2);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText("Acceleration (m/s²)", 0, 0);
+          ctx.restore();
+        }
+
+        drawFinalCharts() {
+          this.drawBarChart();
+        }
+      }
+
+      // Initialize the simulation when the page loads
+      document.addEventListener("DOMContentLoaded", () => {
+        // Small delay to ensure all elements are rendered
+        setTimeout(() => {
+          new PhysicsSimulation();
+        }, 200);
+      });
+    </script>
+  </body>
+</html>

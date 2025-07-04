@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
 
 export default function CourseContent({ course }) {
   const currentLesson = course.currentLesson
@@ -43,10 +44,18 @@ export default function CourseContent({ course }) {
         )}
 
         <div>
-          <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
-            Quiz
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href={`/quiz/universal-gravitation`}>
+            <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
+              Quiz
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href={`/simulation`}>
+            <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
+              Simulation
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
           {course.nextLesson && (
             <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
               Next Lesson
