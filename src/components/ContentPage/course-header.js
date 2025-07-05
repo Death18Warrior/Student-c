@@ -14,7 +14,7 @@ export default function CourseHeader({ course, onAiAssistantToggle }) {
         </span> */}
       </div>
 
-      <div className="flex items-center">
+      <div className="md:flex lg:flex items-center hidden">
         <Button variant="ghost" size="sm" className="mr-2" onClick={onAiAssistantToggle}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
