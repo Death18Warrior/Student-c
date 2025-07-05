@@ -14,7 +14,8 @@
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
         min-height: 100vh;
-        padding: 20px;
+        padding: 0px;
+        padding-top: 10px;
         color: #333;
       }
       .container {
@@ -43,7 +44,7 @@
         opacity: 0.9;
       }
       .simulation-area {
-        padding: 30px;
+        padding: 10px;
       }
       .controls {
         display: grid;
@@ -281,6 +282,9 @@
         line-height: 1.6;
       }
       @media (max-width: 768px) {
+        .logo {
+          width: 100px !important;
+        }
         .controls {
           grid-template-columns: 1fr;
           gap: 20px;
@@ -376,6 +380,7 @@
           <div style="position: relative">
             <div style="position: absolute; top: 0; right: 0">
               <img
+                class="logo"
                 src="./logo.png"
                 style="width: 180px; height: auto; opacity: 0.7"
               />
@@ -848,7 +853,7 @@
 
         drawInfoText() {
           this.ctx.fillStyle = "#2c3e50";
-          this.ctx.font = "16px Arial";
+          this.ctx.font = "8px Arial";
           this.ctx.textAlign = "left";
           const info = [
             `Environment: ${
