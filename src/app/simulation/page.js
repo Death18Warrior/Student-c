@@ -1,14 +1,24 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 
 const Page = () => {
+    const [iframeHeight, setIframeHeight] = useState('2000px');
+
+    useEffect(() => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            setIframeHeight('2930px'); // 2000px + 400px for mobile
+        }
+    }, []);
+
     return (
         <>
             <iframe
-                src="/test/test.html" // Path to your test.html in the public directory
-                title="Simulation" // Good practice for accessibility
-                width="100%" // Adjust as needed
-                height="2000px" // Adjust as needed
-                style={{ border: 'none' }} // Optional: Remove iframe border
+                src="/test/test.html"
+                title="Simulation"
+                width="100%"
+                height={iframeHeight}
+                style={{ border: 'none' }}
             ></iframe>
         </>
     );
