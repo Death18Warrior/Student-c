@@ -82,11 +82,11 @@ export default function Navbar({ student }) {
                                                 <User className="h-4 w-4 mr-2" />
                                                 My Profile
                                             </Link>
-                                            <Link href="/results" className="px-4 py-2 hover:bg-[#444] transition-colors flex items-center">
+                                            <Link href="/profile/results" className="px-4 py-2 hover:bg-[#444] transition-colors flex items-center">
                                                 <Award className="h-4 w-4 mr-2" />
                                                 My Results
                                             </Link>
-                                            <Link href="/interests" className="px-4 py-2 hover:bg-[#444] transition-colors flex items-center">
+                                            <Link href="/profile/interests" className="px-4 py-2 hover:bg-[#444] transition-colors flex items-center">
                                                 <BookOpen className="h-4 w-4 mr-2" />
                                                 My Interests
                                             </Link>
@@ -147,7 +147,7 @@ export default function Navbar({ student }) {
                                         <User className="h-5 w-5 mr-3" />
                                         My Profile
                                     </Link>
-                                    <Link href="/results" className="px-3 py-2 rounded-md hover:bg-[#3a3a3a] transition-colors flex items-center">
+                                    <Link href="/profile/results" className="px-3 py-2 rounded-md hover:bg-[#3a3a3a] transition-colors flex items-center">
                                         <Award className="h-5 w-5 mr-3" />
                                         My Results
                                     </Link>
