@@ -99,7 +99,7 @@ export default function ContentClientPage2({ content, topics }) {
             )}
 
             <div className="flex items-center gap-2">
-              <Link href={`/quiz/${content.id}`}>
+              <Link href={`/quizzes`}>
                 <Button variant="outline" className="flex bg-blue-50 justify-center items-center text-blue-600 hover:text-blue-800 p-2">
                   Quiz
                   <ChevronRight className="ml-1 h-4 w-4" />
