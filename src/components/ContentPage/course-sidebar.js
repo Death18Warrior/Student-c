@@ -36,7 +36,7 @@ export default function CourseSidebar({ course }) {
           <CollapsibleTrigger className="flex items-start justify-between w-full text-left">
             <div className="flex-1">
               <h3 className="font-medium text-sm">
-                Section {index + 1}: {section.title}
+                {section.title}
               </h3>
               <div className="text-xs text-gray-500 mt-1">
                 {section.completedLessons}/{section.lessons.length} • {section.totalDuration}
@@ -56,7 +56,7 @@ export default function CourseSidebar({ course }) {
                     htmlFor={`lesson-${lesson.id}`}
                     className={`text-sm cursor-pointer ${lesson.completed ? "text-gray-500" : "text-gray-900"}`}
                   >
-                    {lesson.order}. {lesson.title}
+                    {lesson.title}
                     {lesson.isActive && <span className="ml-2 text-blue-600">•</span>}
                   </label>
                   <div className="flex items-center mt-1">

@@ -9,7 +9,29 @@ import { Clock, FileText, Play, CheckCircle, Lock } from "lucide-react"
 export default async function QuizzesPage() {
     const topics = await getAllTopics();
 
+    if (!topics || topics.length === 0) {
+        return (
+            <section className="w-full min-h-[90dvh] flex justify-center items-center">
+                <div className="text-center">
+                    <h1 className="text-3xl font-bold mb-4">No Topics Found</h1>
+                    <p className="text-gray-600">It seems there are no topics available to create quizzes for.</p>
+                </div>
+            </section>
+        );
+    }
+
     const quizzesDetails = await Promise.all(topics.map(topic => getQuizByTopicId(topic.id)));
+
+    if (!quizzesDetails || quizzesDetails.length === 0) {
+        return (
+            <section className="w-full min-h-[90dvh] flex justify-center items-center">
+                <div className="text-center">
+                    <h1 className="text-3xl font-bold mb-4">No Quizzes Found</h1>
+                    <p className="text-gray-600">It seems there are no quizzes available at the moment.</p>
+                </div>
+            </section>
+        );
+    }
 
     const quizzes = quizzesDetails.map(quiz => {
         if (!quiz) {
@@ -49,40 +71,7 @@ export default async function QuizzesPage() {
     const completedQuizzes = []; // No completed status from API yet
     const lockedQuizzes = quizzes.filter((quiz) => quiz && quiz.status === "locked")
 
-    const BlankQuizCard = () => (
-        <Card className="flex flex-col bg-gray-200 shadow-lg hover:shadow-xl transition-shadow animate-pulse">
-            <CardHeader>
-                <div className="flex items-start justify-between mb-2">
-                    <Badge className="bg-gray-100 text-gray-800">-</Badge>
-                </div>
-                <CardTitle className="text-lg font-bold">No Quiz Available</CardTitle>
-                <CardDescription className="text-gray-700 text-sm">There is no quiz associated with this topic yet.</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-                <div className="space-y-2">
-                    <div className="flex items-center text-sm text-gray-600">
-                        <Clock className="w-4 h-4 mr-2" />
-                        <span>- minutes</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                        <FileText className="w-4 h-4 mr-2" />
-                        <span>- questions</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                        <Badge variant="outline" className="text-xs">
-                            Subject: -
-                        </Badge>
-                    </div>
-                </div>
-            </CardContent>
-            <CardFooter>
-                <Button variant="outline" className="w-full" disabled>
-                    <Lock className="w-4 h-4 mr-2" />
-                    Locked
-                </Button>
-            </CardFooter>
-        </Card>
-    );
+
 
     const QuizCard = ({ quiz, showStatus = false }) => {
         if (!quiz) {
@@ -177,7 +166,9 @@ export default async function QuizzesPage() {
                             {availableQuizzes.length > 0 ? (
                                 availableQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <BlankQuizCard />
+                                <div className="text-center col-span-3">
+                                    <p className="text-gray-500">No available quizzes at the moment.</p>
+                                </div>
                             )}
                         </div>
                     </TabsContent>
@@ -187,7 +178,9 @@ export default async function QuizzesPage() {
                             {completedQuizzes.length > 0 ? (
                                 completedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <BlankQuizCard />
+                                <div className="text-center col-span-3">
+                                    <p className="text-gray-500">You haven't completed any quizzes yet.</p>
+                                </div>
                             )}
                         </div>
                     </TabsContent>
@@ -197,7 +190,9 @@ export default async function QuizzesPage() {
                             {lockedQuizzes.length > 0 ? (
                                 lockedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <BlankQuizCard />
+                                <div className="text-center col-span-3">
+                                    <p className="text-gray-500">There are no locked quizzes at the moment.</p>
+                                </div>
                             )}
                         </div>
                     </TabsContent>
