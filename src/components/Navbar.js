@@ -8,25 +8,9 @@ import { usePathname } from 'next/navigation';
 import FullscreenButton from "./WindowMax";
 
 
-export default function Navbar() {
+export default function Navbar({ student }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-    const [hideTimeout, setHideTimeout] = useState(null);
-
-    const handleMouseEnter = () => {
-        if (hideTimeout) {
-            clearTimeout(hideTimeout);
-            setHideTimeout(null);
-        }
-        setProfileDropdownOpen(true);
-    };
-
-    const handleMouseLeave = () => {
-        const timeout = setTimeout(() => {
-            setProfileDropdownOpen(false);
-        }, 200); // small delay (ms) to allow user to move into dropdown
-        setHideTimeout(timeout);
-    };
     const dropdownRef = useRef(null);
 
     const pathname = usePathname();
@@ -58,7 +42,7 @@ export default function Navbar() {
                             {/* Logo - Left Side */}
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/dashboard/" className="flex items-center">
-                                    <Image src="/seedling.png" alt="Logo" width={65} height={45} />
+                                    <Image src="/seedling.png" alt="Logo" width={65} height={45} style={{ height: "auto" }} sizes="100vw" />
                                     {/* <Image src="/111.png" alt="Logo" width={50} height={45} /> */}
                                     {/* <span className="ml-2 text-xl font-semibold">C2I</span> */}
                                 </Link>
@@ -76,8 +60,6 @@ export default function Navbar() {
                                 <div
                                     className="relative z-40"
                                     ref={dropdownRef}
-                                    onMouseEnter={handleMouseEnter}
-                                    onMouseLeave={handleMouseLeave}
                                 >
                                     <button
                                         className="flex items-center justify-center h-10 w-10 rounded-full bg-[#333] hover:bg-[#444] focus:outline-none"
@@ -86,14 +68,14 @@ export default function Navbar() {
                                         aria-expanded={profileDropdownOpen}
                                     >
                                         <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#444] flex items-center justify-center">
-                                            <span className="text-xl font-bold">A</span>
+                                            <span className="text-xl font-bold">{student.firstName.charAt(0)}</span>
                                         </div>
                                     </button>
 
                                     {profileDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-48 bg-[#333] rounded-md shadow-lg py-1 z-10">
                                             <div className="px-4 py-2 border-b border-[#444]">
-                                                <p className="font-medium">Hi, Anay</p>
+                                                <p className="font-medium">Hi, {student.firstName}</p>
                                                 <p className="text-sm text-gray-300">Welcome back</p>
                                             </div>
                                             <Link href="/profile" className="px-4 py-2 hover:bg-[#444] transition-colors flex items-center">

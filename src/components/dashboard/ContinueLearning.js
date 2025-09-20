@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 const ContinueLearning = ({ data }) => {
     return (
@@ -22,11 +23,13 @@ const ContinueLearning = ({ data }) => {
                                 <div className="absolute top-3 left-3 bg-white/90 text-gray-800 font-medium text-xs px-3 py-1 rounded-full">
                                     {activity.subject}
                                 </div>
-                                <button className="relative z-10 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                                <Link href={`/courses/content2/${activity.id}`} key={activity.id}>
+                                <div className="relative z-10 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                                         <path d="M8 5.14v14l11-7-11-7z"></path>
                                     </svg>
-                                </button>
+                                </div>
+                                </Link>
                             </div>
 
                             <div className="p-5">
@@ -48,9 +51,11 @@ const ContinueLearning = ({ data }) => {
                                     </div>
                                 </div>
 
-                                <Button className='w-full mt-5'>
-                                    Continue
-                                </Button>
+                                <Link href={`/courses/content2/${activity.id}`} key={activity.id}>
+                                    <Button className='w-full mt-5'>
+                                        Continue
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     ))}

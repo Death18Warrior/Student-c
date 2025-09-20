@@ -1,4 +1,4 @@
-import { getAllQuizzes } from "@/lib/quiz-data"
+import { getAllTopics, getQuizByTopicId } from "@/lib/quiz/api"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -7,7 +7,26 @@ import { Badge } from "@/components/ui/badge"
 import { Clock, FileText, Play, CheckCircle, Lock } from "lucide-react"
 
 export default async function QuizzesPage() {
-    const quizzes = await getAllQuizzes()
+    const topics = await getAllTopics();
+
+    const quizzesDetails = await Promise.all(topics.map(topic => getQuizByTopicId(topic.id)));
+
+    const quizzes = quizzesDetails.map(quiz => {
+        if (!quiz) {
+            return null;
+        }
+
+        const result = quizResults.find(r => r.quiz === quiz.id);
+        const status = result ? result.status : (quiz.is_active ? 'available' : 'locked');
+
+        return {
+            ...quiz,
+            status: status,
+            difficulty: 'medium', // hardcoded
+            subject: 'General', // hardcoded
+            duration: 10, // hardcoded
+        };
+    });
 
     const subjectColorMap = {
         maths: "bg-teal-100",
@@ -26,70 +45,111 @@ export default async function QuizzesPage() {
     }
 
     // Filter quizzes by status
-    const availableQuizzes = quizzes.filter((quiz) => quiz.status === "available")
-    const completedQuizzes = quizzes.filter((quiz) => quiz.status === "completed")
-    const lockedQuizzes = quizzes.filter((quiz) => quiz.status === "locked")
+    const availableQuizzes = quizzes.filter((quiz) => quiz && quiz.status === "available")
+    const completedQuizzes = []; // No completed status from API yet
+    const lockedQuizzes = quizzes.filter((quiz) => quiz && quiz.status === "locked")
 
-    const QuizCard = ({ quiz, showStatus = false }) => (
-        <Card
-            key={quiz.id}
-            className={`flex flex-col ${subjectColorMap[quiz.subject] || "bg-gray-200"} shadow-lg hover:shadow-xl transition-shadow`}
-        >
+    const BlankQuizCard = () => (
+        <Card className="flex flex-col bg-gray-200 shadow-lg hover:shadow-xl transition-shadow animate-pulse">
             <CardHeader>
                 <div className="flex items-start justify-between mb-2">
-                    <Badge className={difficultyColorMap[quiz.difficulty] || "bg-gray-100 text-gray-800"}>
-                        {quiz.difficulty}
-                    </Badge>
-                    {showStatus && (
-                        <Badge variant="outline" className="ml-2">
-                            {quiz.status}
-                        </Badge>
-                    )}
+                    <Badge className="bg-gray-100 text-gray-800">-</Badge>
                 </div>
-                <CardTitle className="text-lg font-bold">{quiz.title}</CardTitle>
-                <CardDescription className="text-gray-700 text-sm">{quiz.description}</CardDescription>
+                <CardTitle className="text-lg font-bold">No Quiz Available</CardTitle>
+                <CardDescription className="text-gray-700 text-sm">There is no quiz associated with this topic yet.</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
                 <div className="space-y-2">
                     <div className="flex items-center text-sm text-gray-600">
                         <Clock className="w-4 h-4 mr-2" />
-                        <span>{quiz.duration} minutes</span>
+                        <span>- minutes</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                         <FileText className="w-4 h-4 mr-2" />
-                        <span>{quiz.questions.length} questions</span>
+                        <span>- questions</span>
                     </div>
                     <div className="flex items-center text-sm">
                         <Badge variant="outline" className="text-xs">
-                            Subject: {quiz.subject}
+                            Subject: -
                         </Badge>
                     </div>
                 </div>
             </CardContent>
             <CardFooter>
-                {quiz.status === "available" && (
-                    <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
-                        <Link href={`/quiz/${quiz.id}`}>
-                            <Play className="w-4 h-4 mr-2" />
-                            Start Quiz
-                        </Link>
-                    </Button>
-                )}
-                {quiz.status === "completed" && (
-                    <Button variant="outline" className="w-full" disabled>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Completed
-                    </Button>
-                )}
-                {quiz.status === "locked" && (
-                    <Button variant="outline" className="w-full" disabled>
-                        <Lock className="w-4 h-4 mr-2" />
-                        Locked
-                    </Button>
-                )}
+                <Button variant="outline" className="w-full" disabled>
+                    <Lock className="w-4 h-4 mr-2" />
+                    Locked
+                </Button>
             </CardFooter>
         </Card>
-    )
+    );
+
+    const QuizCard = ({ quiz, showStatus = false }) => {
+        if (!quiz) {
+            return <BlankQuizCard />;
+        }
+
+        return (
+            <Card
+                key={quiz.id}
+                className={`flex flex-col ${subjectColorMap[quiz.subject] || "bg-gray-200"} shadow-lg hover:shadow-xl transition-shadow`}
+            >
+                <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                        <Badge className={difficultyColorMap[quiz.difficulty] || "bg-gray-100 text-gray-800"}>
+                            {quiz.difficulty}
+                        </Badge>
+                        {showStatus && (
+                            <Badge variant="outline" className="ml-2">
+                                {quiz.status}
+                            </Badge>
+                        )}
+                    </div>
+                    <CardTitle className="text-lg font-bold">{quiz.title}</CardTitle>
+                    <CardDescription className="text-gray-700 text-sm">{quiz.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                    <div className="space-y-2">
+                        <div className="flex items-center text-sm text-gray-600">
+                            <Clock className="w-4 h-4 mr-2" />
+                            <span>{quiz.duration} minutes</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                            <FileText className="w-4 h-4 mr-2" />
+                            <span>{quiz.questions.length} questions</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                            <Badge variant="outline" className="text-xs">
+                                Subject: {quiz.subject}
+                            </Badge>
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    {quiz.status === "available" && (
+                        <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                            <Link href={`/quiz/${quiz.id}`}>
+                                <Play className="w-4 h-4 mr-2" />
+                                Start Quiz
+                            </Link>
+                        </Button>
+                    )}
+                    {quiz.status === "completed" && (
+                        <Button variant="outline" className="w-full" disabled>
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Completed
+                        </Button>
+                    )}
+                    {quiz.status === "locked" && (
+                        <Button variant="outline" className="w-full" disabled>
+                            <Lock className="w-4 h-4 mr-2" />
+                            Locked
+                        </Button>
+                    )}
+                </CardFooter>
+            </Card>
+        )
+    }
 
     return (
         <section className="w-full min-h-[90dvh]">
@@ -117,9 +177,7 @@ export default async function QuizzesPage() {
                             {availableQuizzes.length > 0 ? (
                                 availableQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <div className="col-span-full text-center py-12">
-                                    <p className="text-gray-500 text-lg">No available quizzes at the moment.</p>
-                                </div>
+                                <BlankQuizCard />
                             )}
                         </div>
                     </TabsContent>
@@ -129,10 +187,7 @@ export default async function QuizzesPage() {
                             {completedQuizzes.length > 0 ? (
                                 completedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <div className="col-span-full text-center py-12">
-                                    <p className="text-gray-500 text-lg">No completed quizzes yet.</p>
-                                    <p className="text-gray-400 text-sm mt-2">Complete some quizzes to see them here!</p>
-                                </div>
+                                <BlankQuizCard />
                             )}
                         </div>
                     </TabsContent>
@@ -142,10 +197,7 @@ export default async function QuizzesPage() {
                             {lockedQuizzes.length > 0 ? (
                                 lockedQuizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
                             ) : (
-                                <div className="col-span-full text-center py-12">
-                                    <p className="text-gray-500 text-lg">No locked quizzes.</p>
-                                    <p className="text-gray-400 text-sm mt-2">All quizzes are available to you!</p>
-                                </div>
+                                <BlankQuizCard />
                             )}
                         </div>
                     </TabsContent>

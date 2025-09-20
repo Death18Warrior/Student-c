@@ -143,44 +143,7 @@ export const reportsData = [
     }
 ];
 
-// Recent activity data
-export const recentActivityData = [
-    {
-        id: '1',
-        subject: 'Maths',
-        title: 'Algebra - Quadratic Equations',
-        progress: 60,
-        lastAccessed: 'Today, 2:30 PM',
-        icon: 'https://images.pexels.com/photos/3729557/pexels-photo-3729557.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        color: '#4361EE'
-    },
-    {
-        id: '2',
-        subject: 'Physics',
-        title: 'Newton\'s Laws of Motion',
-        progress: 45,
-        lastAccessed: 'Yesterday, 4:15 PM',
-        icon: 'https://images.pexels.com/photos/6153354/pexels-photo-6153354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        color: '#3A0CA3'
-    },
-    {
-        id: '3',
-        subject: 'Computer Science',
-        title: 'Introduction to Algorithms',
-        progress: 88,
-        lastAccessed: 'Yesterday, 10:00 AM',
-        icon: 'https://images.pexels.com/photos/2004161/pexels-photo-2004161.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        color: '#F3722C'
-    }, {
-        id: '4',
-        subject: 'Maths',
-        title: 'Algebra - Quadratic Equations',
-        progress: 60,
-        lastAccessed: 'Today, 2:30 PM',
-        icon: 'https://images.pexels.com/photos/3729557/pexels-photo-3729557.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        color: '#4361EE'
-    },
-];
+
 
 // Performance data for charts
 export const performanceData = {

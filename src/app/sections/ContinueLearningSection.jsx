@@ -1,10 +1,9 @@
 // app/sections/ContinueLearningSection.jsx
 import ContinueLearning from "@/components/dashboard/ContinueLearning";
-import { recentActivityData } from "../lib/data";
+import { getRecentActivityData } from "@/lib/dashboard/api";
 
 const ContinueLearningSection = async () => {
-  // If later fetching from DB/API, use `await fetch(...)` here
-  const data = recentActivityData;
+  const data = await getRecentActivityData();
 
   return <ContinueLearning data={data} />;
 };

@@ -6,9 +6,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ChevronDown } from "lucide-react"
 
 export default function CourseSidebar({ course }) {
-  const [openSections, setOpenSections] = useState({
-    [course.sections[0].id]: true,
-  })
+  const [openSections, setOpenSections] = useState(() => {
+    if (course.sections && course.sections.length > 0) {
+      return { [course.sections[0].id]: true };
+    }
+    return {};
+  });
 
   const toggleSection = (sectionId) => {
     setOpenSections({

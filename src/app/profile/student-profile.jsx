@@ -16,44 +16,23 @@ import {
 
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 
-export default function StudentProfile() {
-  // Mock student data - in a real app, this would come from an API or database
-  const [student, setStudent] = useState({
-    name: "Alex Johnson",
-    avatar: "/avatar.png",
-    school: "Westlake High School",
-    grade: "11th Grade",
-    quizResults: [
-      {
-        id: 1,
-        subject: "Mathematics",
-        score: 85,
-        date: "2023-04-15",
-        totalQuestions: 20,
-      },
-      {
-        id: 2,
-        subject: "Science",
-        score: 92,
-        date: "2023-04-10",
-        totalQuestions: 25,
-      },
-      {
-        id: 3,
-        subject: "History",
-        score: 78,
-        date: "2023-04-05",
-        totalQuestions: 30,
-      },
-      {
-        id: 4,
-        subject: "English",
-        score: 88,
-        date: "2023-03-28",
-        totalQuestions: 15,
-      },
-    ],
-  });
+export default function StudentProfile({ student: apiStudent }) {
+  const studentData = {
+    name: apiStudent.full_name,
+    avatar: apiStudent.profile_picture,
+    school: `School ID: ${apiStudent.school}`,
+    grade: apiStudent.class || 'N/A',
+    quizResults: [], // API does not provide this yet
+    // Add other fields from the API as needed by child components
+    roll_number: apiStudent.roll_number,
+    guardian_name: apiStudent.guardian_name,
+    contact_number: apiStudent.contact_number,
+    date_of_birth: apiStudent.date_of_birth,
+    gender: apiStudent.gender,
+    address: apiStudent.address,
+    admission_date: apiStudent.admission_date,
+    gpa: apiStudent.gpa,
+  };
 
   return (
     <>
@@ -66,7 +45,7 @@ export default function StudentProfile() {
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-30"></div>
 
-            <ProfileInfo student={student} />
+            <ProfileInfo student={studentData} />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-1">
@@ -82,7 +61,7 @@ export default function StudentProfile() {
             value="results"
             className="bg-white p-6 rounded-xl shadow-md mt-4"
           >
-            <QuizResults results={student.quizResults} />
+            <QuizResults results={studentData.quizResults} />
           </TabsContent>
           <TabsContent
             value="help"

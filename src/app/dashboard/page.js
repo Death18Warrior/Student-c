@@ -1,6 +1,8 @@
 import React from 'react'
 import ContinueLearning from "@/components/dashboard/ContinueLearning";
-import { recentActivityData, streakData, performanceData, achievementsData, reportsData } from "../lib/data";
+import { streakData, performanceData, achievementsData, reportsData } from "../lib/data";
+import { getRecentActivityData, getSubjectsData } from '@/lib/dashboard/api';
+import { getStudentProfile } from '@/lib/student/api';
 import SubjectsDashboard from '@/components/dashboard/SubjectsSection';
 import LearningStreakCard from '@/components/dashboard/LearningStreakCard';
 import PerformanceChart from '@/components/dashboard/PerformanceChart';
@@ -9,8 +11,10 @@ import ReportsSection from '@/components/dashboard/ReportsSection';
 import Greeting from './Greeting';
 import BlogSection from '@/components/blogs/Blogs';
 
-const page = () => {
-    const data = recentActivityData;
+const page = async () => {
+    const recentActivityData = await getRecentActivityData();
+    const subjectsData = await getSubjectsData();
+    const student = await getStudentProfile();
 
     return (
         <>
@@ -22,11 +26,11 @@ const page = () => {
                             <p className="text-sm text-gray-600">Ready to continue your learning journey?</p>
                         </div>
                     </div> */}
-                    <Greeting />
+                    <Greeting name={student.firstName} />
                     <ContinueLearning data={recentActivityData} />
                     <section className='flex mt-5 justify-between flex-wrap'>
                         <div className='lg:w-2/3 w-full py-7'>
-                            <SubjectsDashboard />
+                            <SubjectsDashboard subjectsData={subjectsData} />
                         </div>
                         <div className='lg:w-1/4 w-full mt-10 h-fit'>
                             <LearningStreakCard streakData={streakData} />

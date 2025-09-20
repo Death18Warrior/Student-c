@@ -1,4 +1,3 @@
-'use client'
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -6,9 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock } from "lucide-react"
 import { getFeaturedBlogs } from "@/lib/blogs-data"
 
-export default async function BlogSection() {
-    const featuredBlogs = await getFeaturedBlogs(4)
-
+function BlogSectionContent({ featuredBlogs }) {
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString("en-US", {
             year: "numeric",
@@ -81,4 +78,9 @@ export default async function BlogSection() {
             </div>
         </section>
     )
+}
+
+export default async function BlogSection() {
+    const featuredBlogs = await getFeaturedBlogs(4)
+    return <BlogSectionContent featuredBlogs={featuredBlogs} />
 }

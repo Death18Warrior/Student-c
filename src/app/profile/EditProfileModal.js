@@ -24,23 +24,27 @@ const AVATAR_OPTIONS = [
 
 export default function EditProfileModal({ student }) {
     const [open, setOpen] = useState(false);
-    const [phone, setPhone] = useState(student.phone || "");
+    const [phone, setPhone] = useState(student.contact_number || "");
     const [selectedAvatar, setSelectedAvatar] = useState(student.avatar || AVATAR_OPTIONS[0]);
 
     const handleSubmit = async () => {
-        const res = await fetch(`/api/student/${student.id}`, {
-            method: "POST",
-            body: JSON.stringify({
-                phone,
-                avatar: selectedAvatar
-            }),
+        const updatedStudent = {
+            ...student,
+            contact_number: phone,
+            profile_picture: selectedAvatar,
+        };
+
+        const res = await fetch(`http://16.16.25.254:8000/api/v1/students/profile/2/`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedStudent),
         });
 
-        const result = await res.json();
-        if (result) {
+        if (res.ok) {
             setOpen(false);
-            // You might want to refresh the page or update the parent component here
-            window.location.reload(); // Simple refresh - you can implement a better state update
+            window.location.reload();
         }
     };
 
@@ -86,19 +90,19 @@ export default function EditProfileModal({ student }) {
 
                     <div>
                         <label className="text-sm font-semibold">Name</label>
-                        <Input value={student.student_school?.student_name || "Alex Johnson"} disabled />
+                        <Input value={student.name || ""} disabled />
                     </div>
                     <div>
                         <label className="text-sm font-semibold">Class</label>
-                        <Input value={student.class_assigned?.class_name || "11th Grade"} disabled />
+                        <Input value={student.grade || ""} disabled />
                     </div>
                     <div>
                         <label className="text-sm font-semibold">School</label>
-                        <Input value={student.student_school?.school || "Westlake High School"} disabled />
+                        <Input value={student.school || ""} disabled />
                     </div>
                     <div>
                         <label className="text-sm font-semibold">Mobile Number</label>
-                        <Input value={phone || '+91-9999999999'} onChange={(e) => setPhone(e.target.value)} />
+                        <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
                     </div>
                     <Button onClick={handleSubmit} className="w-full">Save Changes</Button>
                 </div>

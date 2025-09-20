@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/ui/use-toast";
+import { getStudentProfile } from "@/lib/student/api";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,13 +20,15 @@ export const metadata = {
   description: "LMS",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const student = await getStudentProfile();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        <Navbar />
+        <Navbar student={student} />
         <ToastProvider>
           {children}
         </ToastProvider >

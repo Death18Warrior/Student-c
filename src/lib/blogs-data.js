@@ -1,5 +1,3 @@
-"use client"
-
 // Mock blog data - in a real app, this would come from a database
 const blogs = [
     {

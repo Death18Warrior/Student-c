@@ -6,7 +6,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function Greeting() {
+export default function Greeting({ name }) {
     const timeZone = 'Asia/Kolkata'; // Or detect dynamically later
     const now = dayjs().tz(timeZone);
 
@@ -24,7 +24,7 @@ export default function Greeting() {
     return (
         <div className="flex justify-between items-center mb-6">
             <div className="text-3xl font-semibold">
-                <h1>{greeting}, Alex!</h1>
+                <h1>{greeting}, {name}!</h1>
                 <p className="text-sm text-gray-600">
                     Ready to continue your learning journey?
                 </p>

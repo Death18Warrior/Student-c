@@ -1,89 +1,15 @@
 import Link from "next/link"
 
-// Mock data is imported or defined in your actual component
-const subjectsData = [
-    {
-        id: "1",
-        subject: "Maths",
-        icon: '/subject/subject/chem.png',
-        progress: 60,
-        nextTopic: "Quadratic Equations",
-        teacher: "Mrs. Johnson",
-        color: "#4361EE",
-    },
-    {
-        id: "2",
-        subject: "Physics",
-        icon: '/subject/subject/phy.png',
-        progress: 45,
-        nextTopic: "Newton's Laws of Motion",
-        teacher: "Mr. Richards",
-        color: "#3A0CA3",
-    },
-    {
-        id: "3",
-        subject: "SST",
-        icon: '/subject/subject/bio.png',
-        progress: 78,
-        nextTopic: "French Revolution",
-        teacher: "Ms. Peters",
-        color: "#F72585",
-    },
-    {
-        id: "4",
-        subject: "Science",
-        icon: '/subject/subject/phy.png',
-        progress: 32,
-        nextTopic: "Cell Structure",
-        teacher: "Dr. Williams",
-        color: "#7209B7",
-    },
-    {
-        id: "5",
-        subject: "English",
-        icon: '/subject/subject/bio.png',
-        progress: 65,
-        nextTopic: "Shakespeare's Hamlet",
-        teacher: "Mrs. Thompson",
-        color: "#4CC9F0",
-    },
-    {
-        id: "6",
-        subject: "Chemistry",
-        icon: '/subject/subject/chem.png',
-        progress: 51,
-        nextTopic: "Periodic Table",
-        teacher: "Mrs. Davis",
-        color: "#F94144",
-    },
-    {
-        id: "7",
-        subject: "Computer Science",
-        icon: '/subject/subject/phy.png',
-        progress: 88,
-        nextTopic: "Algorithms",
-        teacher: "Mr. Anderson",
-        color: "#F3722C",
-    },
-    {
-        id: "8",
-        subject: "Arts",
-        icon: '/subject/subject/chem.png',
-        progress: 75,
-        nextTopic: "Renaissance Art",
-        teacher: "Ms. Garcia",
-        color: "#F8961E",
-    },
-]
-
-export default function SubjectsDashboard() {
+export default function SubjectsDashboard({ subjectsData, title = "My Subjects", showViewAll = true }) {
     return (
         <div className="">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-800">My Subjects</h2>
-                <Link href="/all-subjects" className="text-blue-600 hover:underline">
-                    View All
-                </Link>
+                <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+                {showViewAll && (
+                    <Link href="/courses/all" className="text-blue-600 hover:underline">
+                        View All
+                    </Link>
+                )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
@@ -139,46 +65,3 @@ function SubjectCard({ subject }) {
         </div>
     );
 }
-
-// import Image from 'next/image'
-
-// const cards = [
-//     {
-//         id: 1,
-//         name: 'Physics',
-//         src: '/subject/subject/phy.png',
-//     },
-//     {
-//         id: 2,
-//         name: 'Biology',
-//         src: '/subject/subject/chem.png',
-//     },
-//     {
-//         id: 3,
-//         name: 'Chemistry',
-//         src: '/subject/subject/bio.png',
-//     },
-//     //   {
-//     //     id: 4,
-//     //     name: 'Maths',
-//     //     src: '/subject/subject/phy.png',
-//     //   },
-// ]
-
-// export default function SubjectsDashboard() {
-//     return (
-//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-//             {cards.map(card => (
-//                 <div key={card.id} className="rounded-lg overflow-hidden shadow-lg">
-//                     <Image
-//                         src={card.src}
-//                         alt={card.name}
-//                         width={500}  // adjust width as needed
-//                         height={300} // adjust height as needed
-//                         className="w-full h-auto object-cover rounded-xl"
-//                     />
-//                 </div>
-//             ))}
-//         </div>
-//     )
-// }

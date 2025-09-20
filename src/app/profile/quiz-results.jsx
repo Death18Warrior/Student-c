@@ -4,6 +4,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BarChart, Calendar, Clock } from "lucide-react"
 
 export default function QuizResults({ results }) {
+  if (!results || results.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <h3 className="text-lg font-medium">No quiz results available yet</h3>
+        <p className="text-gray-500 mt-2">Take some quizzes to see your results here.</p>
+      </div>
+    );
+  }
+
   // Calculate average score
   const averageScore = results.reduce((acc, result) => acc + result.score, 0) / results.length
 
